@@ -1,0 +1,38 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/01/Mux4Way16.hdl
+
+/**
+ * 4-way 16-bit multiplexor:
+ * out = a if sel == 00
+ *       b if sel == 01
+ *       c if sel == 10
+ *       d if sel == 11
+ */
+
+CHIP Mux4Way16 {
+    IN a[16], b[16], c[16], d[16], sel[2];
+    OUT out[16];
+
+    PARTS:
+    // Inversion des entrees
+    Not(in=sel[1], out=outNotsel1);
+    Not(in=sel[0], out=outNotsel2);
+    // Selection a -> 00
+    And(a=outNotsel1, b=outNotsel2, out=outNotsel1AndNotsel2);
+    And16(a[0]=outNotsel1AndNotsel2, a[1]=outNotsel1AndNotsel2, a[2]=outNotsel1AndNotsel2, a[3]=outNotsel1AndNotsel2, a[4]=outNotsel1AndNotsel2, a[5]=outNotsel1AndNotsel2, a[6]=outNotsel1AndNotsel2, a[7]=outNotsel1AndNotsel2, a[8]=outNotsel1AndNotsel2, a[9]=outNotsel1AndNotsel2, a[10]=outNotsel1AndNotsel2, a[11]=outNotsel1AndNotsel2, a[12]=outNotsel1AndNotsel2, a[13]=outNotsel1AndNotsel2, a[14]=outNotsel1AndNotsel2, a[15]=outNotsel1AndNotsel2, b=a, out=outa);
+	// Selection b -> 01
+	And(a=outNotsel1, b=sel[0], out=outNotsel1Andsel2);
+	And16(a[0]=outNotsel1Andsel2, a[1]=outNotsel1Andsel2, a[2]=outNotsel1Andsel2, a[3]=outNotsel1Andsel2, a[4]=outNotsel1Andsel2, a[5]=outNotsel1Andsel2, a[6]=outNotsel1Andsel2, a[7]=outNotsel1Andsel2, a[8]=outNotsel1Andsel2, a[9]=outNotsel1Andsel2, a[10]=outNotsel1Andsel2, a[11]=outNotsel1Andsel2, a[12]=outNotsel1Andsel2, a[13]=outNotsel1Andsel2, a[14]=outNotsel1Andsel2, a[15]=outNotsel1Andsel2, b=b, out=outb);
+	// Selection c -> 10
+	And(a=sel[1], b=outNotsel2, out=outsel1AndNotsel2);
+	And16(a[0]=outsel1AndNotsel2, a[1]=outsel1AndNotsel2, a[2]=outsel1AndNotsel2, a[3]=outsel1AndNotsel2, a[4]=outsel1AndNotsel2, a[5]=outsel1AndNotsel2, a[6]=outsel1AndNotsel2, a[7]=outsel1AndNotsel2, a[8]=outsel1AndNotsel2, a[9]=outsel1AndNotsel2, a[10]=outsel1AndNotsel2, a[11]=outsel1AndNotsel2, a[12]=outsel1AndNotsel2, a[13]=outsel1AndNotsel2, a[14]=outsel1AndNotsel2, a[15]=outsel1AndNotsel2, b=c, out=outc);
+	// Selection d -> 11
+	And(a=sel[1], b=sel[0], out=outsel1Andsel2);
+	And16(a[0]=outsel1Andsel2, a[1]=outsel1Andsel2, a[2]=outsel1Andsel2, a[3]=outsel1Andsel2, a[4]=outsel1Andsel2, a[5]=outsel1Andsel2, a[6]=outsel1Andsel2, a[7]=outsel1Andsel2, a[8]=outsel1Andsel2, a[9]=outsel1Andsel2, a[10]=outsel1Andsel2, a[11]=outsel1Andsel2, a[12]=outsel1Andsel2, a[13]=outsel1Andsel2, a[14]=outsel1Andsel2, a[15]=outNotsel1AndNotsel2, b=d, out=outd);
+	// Ou final
+	Or16(a=outa, b=outb, out=outaOrb);
+	Or16(a=outaOrb, b=outc, out=outaOrbOrc);
+	Or16(a=outaOrbOrc, b=outd, out=out);
+}

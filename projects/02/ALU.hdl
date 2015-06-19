@@ -1,0 +1,85 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/02/ALU.hdl
+
+/**
+ * The ALU (Arithmetic Logic Unit).
+ * Computes one of the following functions:
+ * x+y, x-y, y-x, 0, 1, -1, x, y, -x, -y, !x, !y,
+ * x+1, y+1, x-1, y-1, x&y, x|y on two 16-bit inputs, 
+ * according to 6 input bits denoted zx,nx,zy,ny,f,no.
+ * In addition, the ALU computes two 1-bit outputs:
+ * if the ALU output == 0, zr is set to 1; otherwise zr is set to 0;
+ * if the ALU output < 0, ng is set to 1; otherwise ng is set to 0.
+ */
+
+// Implementation: the ALU logic manipulates the x and y inputs
+// and operates on the resulting values, as follows:
+// if (zx == 1) set x = 0        // 16-bit constant
+// if (nx == 1) set x = !x       // bitwise not
+// if (zy == 1) set y = 0        // 16-bit constant
+// if (ny == 1) set y = !y       // bitwise not
+// if (f == 1)  set out = x + y  // integer 2's complement addition
+// if (f == 0)  set out = x & y  // bitwise and
+// if (no == 1) set out = !out   // bitwise not
+// if (out == 0) set zr = 1
+// if (out < 0) set ng = 1
+
+CHIP ALU {
+    IN  
+        x[16], y[16],  // 16-bit inputs        
+        zx, // zero the x input?
+        nx, // negate the x input?
+        zy, // zero the y input?
+        ny, // negate the y input?
+        f,  // compute out = x + y (if 1) or x & y (if 0)
+        no; // negate the out output?
+
+    OUT 
+        out[16], // 16-bit output
+        zr, // 1 if (out == 0), 0 otherwise
+        ng; // 1 if (out < 0),  0 otherwise
+
+    PARTS:
+    // if (zx == 1) set x = 0
+    Not16(in[0]=zx, in[1]=zx, in[2]=zx, in[3]=zx, in[4]=zx, in[5]=zx, in[6]=zx, in[7]=zx, in[8]=zx, in[9]=zx, in[10]=zx, in[11]=zx, in[12]=zx, in[13]=zx, in[14]=zx, in[15]=zx, out=outNotzx);
+    And16(a=x, b=outNotzx, out=outzx);
+    
+    // if (nx == 1) set x = !x
+    Not16(in=outzx, out=Notzx);
+    Not16(in[0]=nx, in[1]=nx, in[2]=nx, in[3]=nx, in[4]=nx, in[5]=nx, in[6]=nx, in[7]=nx, in[8]=nx, in[9]=nx, in[10]=nx, in[11]=nx, in[12]=nx, in[13]=nx, in[14]=nx, in[15]=nx, out=Notnx);
+    And16(a=Notzx, b[0]=nx, b[1]=nx, b[2]=nx, b[3]=nx, b[4]=nx, b[5]=nx, b[6]=nx, b[7]=nx, b[8]=nx, b[9]=nx, b[10]=nx, b[11]=nx, b[12]=nx, b[13]=nx, b[14]=nx, b[15]=nx, out=outNotzxAndnx);
+    And16(a=outzx, b=Notnx, out=outzxAndNotnx);
+    Or16(a=outNotzxAndnx, b=outzxAndNotnx, out=outnx);
+    
+    // if (zy == 1) set y = 0
+    Not16(in[0]=zy, in[1]=zy, in[2]=zy, in[3]=zy, in[4]=zy, in[5]=zy, in[6]=zy, in[7]=zy, in[8]=zy, in[9]=zy, in[10]=zy, in[11]=zy, in[12]=zy, in[13]=zy, in[14]=zy, in[15]=zy, out=outNotzy);
+    And16(a=y, b=outNotzy, out=outzy);
+    
+    // if (ny == 1) set y = !y
+    Not16(in=outzy, out=Notzy);
+    Not16(in[0]=ny, in[1]=ny, in[2]=ny, in[3]=ny, in[4]=ny, in[5]=ny, in[6]=ny, in[7]=ny, in[8]=ny, in[9]=ny, in[10]=ny, in[11]=ny, in[12]=ny, in[13]=ny, in[14]=ny, in[15]=ny, out=Notny);
+    And16(a=Notzy, b[0]=ny, b[1]=ny, b[2]=ny, b[3]=ny, b[4]=ny, b[5]=ny, b[6]=ny, b[7]=ny, b[8]=ny, b[9]=ny, b[10]=ny, b[11]=ny, b[12]=ny, b[13]=ny, b[14]=ny, b[15]=ny, out=outNotzyAndny);
+    And16(a=outzy, b=Notny, out=outzyAndNotny);
+    Or16(a=outNotzyAndny, b=outzyAndNotny, out=outny);
+    
+    // if (f == 1)  set out = x + y
+    And16(a=outnx, b=outny, out=outnxAndny);
+    Add16(a=outnx, b=outny, out=outnxAddny);
+    Mux16(a=outnxAndny, b=outnxAddny, sel=f, out=outf);
+    
+    // if (no == 1) set out = !out
+    Not16(in=outf, out=Notf);
+    Not16(in[0]=no, in[1]=no, in[2]=no, in[3]=no, in[4]=no, in[5]=no, in[6]=no, in[7]=no, in[8]=no, in[9]=no, in[10]=no, in[11]=no, in[12]=no, in[13]=no, in[14]=no, in[15]=no, out=Notno);
+    And16(a=Notf, b[0]=no, b[1]=no, b[2]=no, b[3]=no, b[4]=no, b[5]=no, b[6]=no, b[7]=no, b[8]=no, b[9]=no, b[10]=no, b[11]=no, b[12]=no, b[13]=no, b[14]=no, b[15]=no, out=outNotfAndno);
+    And16(a=outf, b=Notno, out=outfAndNotno);
+    Or16(a=outNotfAndno, b=outfAndNotno, out[15]=outng, out=outzr, out=out);
+
+    // zr==1 if (out == 0), 0 otherwise
+    Ecmp16(a=outzr, b[0..15]=false, out=zr);
+    
+    // ng==1 if (out < 0),  0 otherwise
+    Xor(a=outng, b=true, out=outngXortrue);
+    Not(in=outngXortrue, out=ng);
+}

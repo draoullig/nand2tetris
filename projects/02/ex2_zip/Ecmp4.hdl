@@ -1,0 +1,14 @@
+CHIP Ecmp4 {
+    IN a[4], b[4];
+    OUT out;
+
+    PARTS:
+    Xnor(a=a[0], b=b[0], out=outa0Xnorb0);
+    Xnor(a=a[1], b=b[1], out=outa1Xnorb1);
+    Xnor(a=a[2], b=b[2], out=outa2Xnorb2);
+    Xnor(a=a[3], b=b[3], out=outa3Xnorb3);
+    And(a=outa0Xnorb0, b=outa1Xnorb1, out=outa0Xnorb0Anda1Xnorb1);
+    And(a=outa2Xnorb2, b=outa3Xnorb3, out=outa2Xnorb2Anda3Xnorb3);
+    And(a=outa0Xnorb0Anda1Xnorb1, b=outa2Xnorb2Anda3Xnorb3, out=out);
+    
+}

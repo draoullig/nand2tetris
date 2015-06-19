@@ -1,0 +1,62 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/01/Mux8Way16.hdl
+
+/**
+ * 8-way 16-bit multiplexor:
+ * out = a if sel == 000
+ *       b if sel == 001
+ *       etc.
+ *       h if sel == 111
+ */
+
+CHIP Mux8Way16 {
+    IN a[16], b[16], c[16], d[16],
+       e[16], f[16], g[16], h[16],
+       sel[3];
+    OUT out[16];
+
+    PARTS:
+    // Inversion des entrees
+    Not(in=sel[2], out=outNotsel2);
+    Not(in=sel[1], out=outNotsel1);
+    Not(in=sel[0], out=outNotsel0);
+
+    // Selection a -> 000
+    And(a=outNotsel0, b=outNotsel1, out=outNotsel0AndNotsel1);
+    And(a=outNotsel0AndNotsel1, b=outNotsel2, out=outNotsel0AndNotsel1AndNotsel2);
+    And16(a[0]=outNotsel0AndNotsel1AndNotsel2, a[1]=outNotsel0AndNotsel1AndNotsel2, a[2]=outNotsel0AndNotsel1AndNotsel2, a[3]=outNotsel0AndNotsel1AndNotsel2, a[4]=outNotsel0AndNotsel1AndNotsel2, a[5]=outNotsel0AndNotsel1AndNotsel2, a[6]=outNotsel0AndNotsel1AndNotsel2, a[7]=outNotsel0AndNotsel1AndNotsel2, a[8]=outNotsel0AndNotsel1AndNotsel2, a[9]=outNotsel0AndNotsel1AndNotsel2, a[10]=outNotsel0AndNotsel1AndNotsel2, a[11]=outNotsel0AndNotsel1AndNotsel2, a[12]=outNotsel0AndNotsel1AndNotsel2, a[13]=outNotsel0AndNotsel1AndNotsel2, a[14]=outNotsel0AndNotsel1AndNotsel2, a[15]=outNotsel0AndNotsel1AndNotsel2, b=a, out=outa);
+	// Selection b -> 001
+	And(a=sel[0], b=outNotsel1, out=outsel0AndNotsel1);
+	And(a=outsel0AndNotsel1, b=outNotsel2, out=outsel0AndNotsel1AndNotsel2);
+	And16(a[0]=outsel0AndNotsel1AndNotsel2, a[1]=outsel0AndNotsel1AndNotsel2, a[2]=outsel0AndNotsel1AndNotsel2, a[3]=outsel0AndNotsel1AndNotsel2, a[4]=outsel0AndNotsel1AndNotsel2, a[5]=outsel0AndNotsel1AndNotsel2, a[6]=outsel0AndNotsel1AndNotsel2, a[7]=outsel0AndNotsel1AndNotsel2, a[8]=outsel0AndNotsel1AndNotsel2, a[9]=outsel0AndNotsel1AndNotsel2, a[10]=outsel0AndNotsel1AndNotsel2, a[11]=outsel0AndNotsel1AndNotsel2, a[12]=outsel0AndNotsel1AndNotsel2, a[13]=outsel0AndNotsel1AndNotsel2, a[14]=outsel0AndNotsel1AndNotsel2, a[15]=outsel0AndNotsel1AndNotsel2, b=b, out=outb);
+	// Selection c -> 010
+	And(a=outNotsel0, b=sel[1], out=outNotsel0Andsel1);
+	And(a=outNotsel0Andsel1, b=outNotsel2, out=outNotsel0Andsel1AndNotsel2);
+	And16(a[0]=outNotsel0Andsel1AndNotsel2, a[1]=outNotsel0Andsel1AndNotsel2, a[2]=outNotsel0Andsel1AndNotsel2, a[3]=outNotsel0Andsel1AndNotsel2, a[4]=outNotsel0Andsel1AndNotsel2, a[5]=outNotsel0Andsel1AndNotsel2, a[6]=outNotsel0Andsel1AndNotsel2, a[7]=outNotsel0Andsel1AndNotsel2, a[8]=outNotsel0Andsel1AndNotsel2, a[9]=outNotsel0Andsel1AndNotsel2, a[10]=outNotsel0Andsel1AndNotsel2, a[11]=outNotsel0Andsel1AndNotsel2, a[12]=outNotsel0Andsel1AndNotsel2, a[13]=outNotsel0Andsel1AndNotsel2, a[14]=outNotsel0Andsel1AndNotsel2, a[15]=outNotsel0Andsel1AndNotsel2, b=c, out=outc);
+	// Selection d -> 011
+	And(a=sel[0], b=sel[1], out=outsel0Andsel1);
+	And(a=outsel0Andsel1, b=outNotsel2, out=outsel0Andsel1AndNotsel2);
+	And16(a[0]=outsel0Andsel1AndNotsel2, a[1]=outsel0Andsel1AndNotsel2, a[2]=outsel0Andsel1AndNotsel2, a[3]=outsel0Andsel1AndNotsel2, a[4]=outsel0Andsel1AndNotsel2, a[5]=outsel0Andsel1AndNotsel2, a[6]=outsel0Andsel1AndNotsel2, a[7]=outsel0Andsel1AndNotsel2, a[8]=outsel0Andsel1AndNotsel2, a[9]=outsel0Andsel1AndNotsel2, a[10]=outsel0Andsel1AndNotsel2, a[11]=outsel0Andsel1AndNotsel2, a[12]=outsel0Andsel1AndNotsel2, a[13]=outsel0Andsel1AndNotsel2, a[14]=outsel0Andsel1AndNotsel2, a[15]=outsel0Andsel1AndNotsel2, b=d, out=outd);
+	// Selection e -> 100
+	And(a=outNotsel0AndNotsel1, b=sel[2], out=outNotsel0AndNotsel1Andsel2);
+	And16(a[0]=outNotsel0AndNotsel1Andsel2, a[1]=outNotsel0AndNotsel1Andsel2, a[2]=outNotsel0AndNotsel1Andsel2, a[3]=outNotsel0AndNotsel1Andsel2, a[4]=outNotsel0AndNotsel1Andsel2, a[5]=outNotsel0AndNotsel1Andsel2, a[6]=outNotsel0AndNotsel1Andsel2, a[7]=outNotsel0AndNotsel1Andsel2, a[8]=outNotsel0AndNotsel1Andsel2, a[9]=outNotsel0AndNotsel1Andsel2, a[10]=outNotsel0AndNotsel1Andsel2, a[11]=outNotsel0AndNotsel1Andsel2, a[12]=outNotsel0AndNotsel1Andsel2, a[13]=outNotsel0AndNotsel1Andsel2, a[14]=outNotsel0AndNotsel1Andsel2, a[15]=outNotsel0AndNotsel1Andsel2, b=e, out=oute);
+	// Selection f -> 101
+	And(a=outsel0AndNotsel1, b=sel[2], out=outsel0AndNotsel1Andsel2);
+	And16(a[0]=outsel0AndNotsel1Andsel2, a[1]=outsel0AndNotsel1Andsel2, a[2]=outsel0AndNotsel1Andsel2, a[3]=outsel0AndNotsel1Andsel2, a[4]=outsel0AndNotsel1Andsel2, a[5]=outsel0AndNotsel1Andsel2, a[6]=outsel0AndNotsel1Andsel2, a[7]=outsel0AndNotsel1Andsel2, a[8]=outsel0AndNotsel1Andsel2, a[9]=outsel0AndNotsel1Andsel2, a[10]=outsel0AndNotsel1Andsel2, a[11]=outsel0AndNotsel1Andsel2, a[12]=outsel0AndNotsel1Andsel2, a[13]=outsel0AndNotsel1Andsel2, a[14]=outsel0AndNotsel1Andsel2, a[15]=outsel0AndNotsel1Andsel2, b=f, out=outf);
+	// Selection g -> 110
+	And(a=outNotsel0Andsel1, b=sel[2], out=outNotsel0Andsel1Andsel2);
+	And16(a[0]=outNotsel0Andsel1Andsel2, a[1]=outNotsel0Andsel1Andsel2, a[2]=outNotsel0Andsel1Andsel2, a[3]=outNotsel0Andsel1Andsel2, a[4]=outNotsel0Andsel1Andsel2, a[5]=outNotsel0Andsel1Andsel2, a[6]=outNotsel0Andsel1Andsel2, a[7]=outNotsel0Andsel1Andsel2, a[8]=outNotsel0Andsel1Andsel2, a[9]=outNotsel0Andsel1Andsel2, a[10]=outNotsel0Andsel1Andsel2, a[11]=outNotsel0Andsel1Andsel2, a[12]=outNotsel0Andsel1Andsel2, a[13]=outNotsel0Andsel1Andsel2, a[14]=outNotsel0Andsel1Andsel2, a[15]=outNotsel0Andsel1Andsel2, b=g, out=outg);
+	// Selection h -> 111
+	And(a=outsel0Andsel1, b=sel[2], out=outsel0Andsel1Andsel2);
+	And16(a[0]=outsel0Andsel1Andsel2, a[1]=outsel0Andsel1Andsel2, a[2]=outsel0Andsel1Andsel2, a[3]=outsel0Andsel1Andsel2, a[4]=outsel0Andsel1Andsel2, a[5]=outsel0Andsel1Andsel2, a[6]=outsel0Andsel1Andsel2, a[7]=outsel0Andsel1Andsel2, a[8]=outsel0Andsel1Andsel2, a[9]=outsel0Andsel1Andsel2, a[10]=outsel0Andsel1Andsel2, a[11]=outsel0Andsel1Andsel2, a[12]=outsel0Andsel1Andsel2, a[13]=outsel0Andsel1Andsel2, a[14]=outsel0Andsel1Andsel2, a[15]=outsel0Andsel1Andsel2, b=h, out=outh);
+	// Ou final
+	Or16(a=outa, b=outb, out=outaOrb);
+	Or16(a=outaOrb, b=outc, out=outaOrbOrc);
+	Or16(a=outaOrbOrc, b=outd, out=outaOrbOrcAndd);
+	Or16(a=outaOrbOrcAndd, b=oute, out=outaOrbOrcAnddAnde);
+	Or16(a=outaOrbOrcAnddAnde, b=outf, out=outaOrbOrcAnddAndeAndf);
+	Or16(a=outaOrbOrcAnddAndeAndf, b=outg, out=outaOrbOrcAnddAndeAndfAndg);
+	Or16(a=outaOrbOrcAnddAndeAndfAndg, b=outh, out=out);
+}

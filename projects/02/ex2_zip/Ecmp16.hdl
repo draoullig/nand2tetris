@@ -1,0 +1,14 @@
+CHIP Ecmp16 {
+    IN a[16], b[16];
+    OUT out;
+
+    PARTS:
+    Ecmp4(a=a[0..3], b=b[0..3], out=outa4Ecmpb4);
+    Ecmp4(a=a[4..7], b=b[4..7], out=outa8Ecmpb8);
+    Ecmp4(a=a[8..11], b=b[8..11], out=outa12Ecmpb12);
+    Ecmp4(a=a[12..15], b=b[12..15], out=outa16Ecmpb16);
+    And(a=outa4Ecmpb4, b=outa8Ecmpb8, out=outa4Ecmpb4Anda8Ecmpb8);
+    And(a=outa12Ecmpb12, b=outa16Ecmpb16, out=outa12Ecmpb12Anda16Ecmpb16);
+    And(a=outa4Ecmpb4Anda8Ecmpb8, b=outa12Ecmpb12Anda16Ecmpb16, out=out);
+    
+}
